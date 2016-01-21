@@ -19,8 +19,6 @@ public class Lottto {
 					break;
 				}
 			}
-			
-			
 		}
 		return a;
 	}
