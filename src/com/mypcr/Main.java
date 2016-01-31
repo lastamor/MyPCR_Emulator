@@ -2,21 +2,53 @@ package com.mypcr;
 
 import java.util.ArrayList;
 
+import com.mypcr.emulator.MyPCR;
 import com.mypcr.emulator.Protocol;
 
 public class Main {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		ArrayList<Protocol> list0 = new ArrayList<Protocol>();
+		ArrayList<Protocol> list1 = new ArrayList<Protocol>();
+		ArrayList<Protocol> list2 = new ArrayList<Protocol>();
 		
 		String pcr = "1	95	10\n" +
 					 "2	60	30\n" + 
 					 "3	72	30\n";
-		String[] pcrs = pcr.split("\n");
+		
+		String pcr1 =   "1	95	10\n" +
+				 		"2	kk	30\n" + 
+				 		"3	72	30\n";
+	
+		String pcr2 =   "1	95	10\n" +
+						"2	60	30\n" + 
+						"3	72\n";
+		
+		list0 = MyPCR.makeProtocolList(pcr);
+		list1 = MyPCR.makeProtocolList(pcr1);
+		list2 = MyPCR.makeProtocolList(pcr2);
+		
+		if (list0 == null)
+			System.out.println("잘못된 PCR 파일을 출력하려 했습니다.");
+		else
+			MyPCR.printProtocolList2(list0);
+		if (list1 == null)
+			System.out.println("잘못된 PCR1 파일을 출력하려했습니다.");
+		else
+			MyPCR.printProtocolList2(list1);
+		if (list2 == null)
+			System.out.println("잘못된 PCR2 파일을 출력하려 했습니다.");
+		
+
+
+		
+		/*		
+		
 		ArrayList<Protocol> list = new ArrayList<Protocol>();
 
-		for (int i = 0; i < pcrs.length; i++) {
-			String temp = pcrs[i];
+		for (int i = 0; i < pcr_0.length; i++) {
+			String temp = pcr_0[i];
 			String[] temp2 = temp.split("\t");
 			
 		//	System.out.println( temp2[0] + "," + temp2[1] + "," +temp2[2]);
@@ -32,6 +64,9 @@ public class Main {
 			                    p.getTemp()  + "\t"+ 
 								p.getTime());	
 		}
+		
+		*/
+		
 	}
 }
 
