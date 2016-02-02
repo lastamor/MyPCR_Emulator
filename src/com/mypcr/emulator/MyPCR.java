@@ -34,6 +34,18 @@ public class MyPCR {
 		return list;
 	}
 	
+	public static void printProtocolList(ArrayList<Protocol> pcr){
+		System.out.println("==== Protocol List ====");
+		System.out.println("Label"+"\t"+ "Temp" + "\t" + "Time");
+		for (int i = 0; i < pcr.size(); i++) {
+			Protocol p = pcr.get(i);
+			System.out.println( p.getLabel() + "\t"+
+			                    p.getTemp()  + "\t"+ 
+								p.getTime());	
+		}
+		
+	}
+
 	public static void printProtocolList2(ArrayList<Protocol> pcr){
 		System.out.println("==== Protocol List ====");
 		System.out.println("Label"+"\t"+ "Temp" + "\t" + "Time");

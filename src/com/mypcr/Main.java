@@ -40,7 +40,31 @@ public class Main {
 
 			list = MyPCR.makeProtocolList(line2);
 		
-			MyPCR.printProtocolList2(list);
+			
+			for (int i = 0; i < list.size(); i++) {
+				Protocol protocol = list.get(i);
+				
+				if(protocol.getLabel().equals("GOTO")){
+					
+					int target = protocol.getTemp();
+					int time = protocol.getTime();
+					protocol.setTime(time-1);
+					
+					if(time-1 != 0){
+						i= target-2;
+					}
+				}
+				else{
+					System.out.println( protocol.getLabel() + "\t"+
+							protocol.getTemp()  + "\t"+ 
+							protocol.getTime());	
+				}
+				
+			}
+		
+			
+			MyPCR p = new MyPCR();
+			
 			
 			
 		}catch(IOException e){
