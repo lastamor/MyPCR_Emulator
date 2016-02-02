@@ -12,8 +12,10 @@ public class MyPCR {
 	
 	public static ArrayList<Protocol> makeProtocolList(String pcr){
 		
-		ArrayList<Protocol> list = new ArrayList<Protocol>();		
+		ArrayList<Protocol> list = new ArrayList<Protocol>();	
+		
 		String[] pcrs = pcr.split("\n");
+		
 		
 		for (int i = 0; i < pcrs.length; i++) {
 			String temp = pcrs[i];

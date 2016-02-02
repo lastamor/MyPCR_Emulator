@@ -1,5 +1,11 @@
 package com.mypcr;
 
+import java.awt.im.InputContext;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import com.mypcr.emulator.MyPCR;
@@ -9,36 +15,37 @@ public class Main {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		ArrayList<Protocol> list0 = new ArrayList<Protocol>();
-		ArrayList<Protocol> list1 = new ArrayList<Protocol>();
-		ArrayList<Protocol> list2 = new ArrayList<Protocol>();
-		
-		String pcr = "1	95	10\n" +
-					 "2	60	30\n" + 
-					 "3	72	30\n";
-		
-		String pcr1 =   "1	95	10\n" +
-				 		"2	kk	30\n" + 
-				 		"3	72	30\n";
 	
-		String pcr2 =   "1	95	10\n" +
-						"2	60	30\n" + 
-						"3	72\n";
+		//BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		BufferedReader in = null;
+		ArrayList<Protocol> list = new ArrayList<Protocol>();		
 		
-		list0 = MyPCR.makeProtocolList(pcr);
-		list1 = MyPCR.makeProtocolList(pcr1);
-		list2 = MyPCR.makeProtocolList(pcr2);
+		try {
+			in = new BufferedReader(new FileReader(new File("procotol.txt")));
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		
-		if (list0 == null)
-			System.out.println("잘못된 PCR 파일을 출력하려 했습니다.");
-		else
-			MyPCR.printProtocolList2(list0);
-		if (list1 == null)
-			System.out.println("잘못된 PCR1 파일을 출력하려했습니다.");
-		else
-			MyPCR.printProtocolList2(list1);
-		if (list2 == null)
-			System.out.println("잘못된 PCR2 파일을 출력하려 했습니다.");
+	
+		try{
+		
+			String line = null;
+			String line2 = "";
+			while ((line = in.readLine()) != null) {
+				
+				line2 = line2 + line + "\n";
+			}
+			in.close();
+		
+
+			list = MyPCR.makeProtocolList(line2);
+		
+			MyPCR.printProtocolList2(list);
+			
+			
+		}catch(IOException e){
+			e.printStackTrace();
+		}
 		
 
 
