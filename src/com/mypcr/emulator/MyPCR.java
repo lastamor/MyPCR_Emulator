@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class MyPCR extends Thread {
 
@@ -13,7 +14,8 @@ public class MyPCR extends Thread {
 	private double mTemp;
 	private double mPreTemp, mTargetTemp;
 	private int state;
-	
+	private int mElapsedTime;
+	private int mSecondCount;
 	private boolean isMonitor = false;
 	
 	private static final int STATE_READY = 0x00;
@@ -28,6 +30,8 @@ public class MyPCR extends Thread {
 		mPreTemp = 25.1;
 		mTargetTemp = 25.1;
 		state = STATE_READY;
+		mElapsedTime = 0;
+		mSecondCount = 0;
 	}
 	
 	public void run(){
@@ -37,20 +41,32 @@ public class MyPCR extends Thread {
 			
 			
 			try {
-				Thread.sleep(100);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			
 			if(state == STATE_RUN){
+				if(mTemp >= mTargetTemp){
+					stopPCR();
+				}
 				
-				mTemp += 0.25;
+				mTemp += 1.1;
+				//if( mSecondCount >= 10)
+				//{
+					//mSecondCount = 0;
+					mElapsedTime++;
+				//}
+				//mSecondCount++;
+
+				
 				
 			}else{
 			
 				mTemp = DEFAULT_TEMP;
 				mPreTemp = DEFAULT_TEMP;
 				mTargetTemp = DEFAULT_TEMP;
+				mElapsedTime = 0;
 				
 			}		
 		}
@@ -145,16 +161,46 @@ public class MyPCR extends Thread {
 			return "동작중";				
 	}
 	
+	private String getElasedTime(){
+
+		String str = "";
+		int seconds = 0;
+		int houre = 0;
+		int minutes = 0;
+		
+		
+		houre = mElapsedTime / 3600;
+		seconds = mElapsedTime % 3600;
+		minutes = seconds / 60;
+		seconds = seconds % 60;
+		
+		str = String.format("%d:%d:%d",houre,minutes,seconds);
+		
+		return str;
+		
+	}
+	
 	public void printStatus(){
-		System.out.println(String.format("상태: %s,  온도: %3.1f", getStateString(),mTemp));
+		 Calendar time1 = Calendar.getInstance();
+		System.out.println(String.format("상태: %s,  온도: %3.1f, elapsedTime : %s", getStateString(),mTemp, getElasedTime()));
 	}
 	
 	public void startPCR(){
+		if(state == STATE_RUN)
+			return;
 		state = STATE_RUN;
+		mPreTemp = 50;
+		mTargetTemp = 95;
+		System.out.println("PCR 시작!");
+		
 	}
 	
 	public void stopPCR(){
+		if(state == STATE_READY)
+			return;
 		state = STATE_READY;
+		System.out.println("PCR 종료!");
+		
 	}
 	
 	public void setMonitoring(boolean monitor){

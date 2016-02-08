@@ -43,7 +43,7 @@ public class Main {
 						public void run(){
 							while(pcr.isMonitoring()){
 								try {
-									Thread.sleep(100);
+									Thread.sleep(1000);
 									pcr.printStatus();
 								} catch (InterruptedException e) {
 									// TODO Auto-generated catch block
