@@ -47,20 +47,19 @@ public class MyPCR extends Thread {
 			}
 			
 			if(state == STATE_RUN){
-				if(mTemp >= mTargetTemp){
-					stopPCR();
+				if(mTemp <= mPreTemp){
+					mTemp += 1.0;	
+					}
+				else{
+					if(mTemp <= mTargetTemp)
+						mTemp += 1.0;	
+					else
+						stopPCR();			
 				}
 				
-				mTemp += 1.1;
-				//if( mSecondCount >= 10)
-				//{
-					//mSecondCount = 0;
-					mElapsedTime++;
-				//}
-				//mSecondCount++;
-
+				mElapsedTime++;	
 				
-				
+		
 			}else{
 			
 				mTemp = DEFAULT_TEMP;
@@ -174,7 +173,18 @@ public class MyPCR extends Thread {
 		minutes = seconds / 60;
 		seconds = seconds % 60;
 		
-		str = String.format("%d:%d:%d",houre,minutes,seconds);
+
+		
+		if (houre != 0 ) {
+			str = String.format("%dh %dm %ds",houre,minutes,seconds);
+		}
+		else if (minutes != 0) {
+			str = String.format("%dm %ds",minutes,seconds);
+		} else {
+			str = String.format("%ds",seconds);
+		}
+
+		
 		
 		return str;
 		
