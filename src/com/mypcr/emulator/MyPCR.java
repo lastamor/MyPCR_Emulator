@@ -40,6 +40,22 @@ public class MyPCR extends Thread {
 		mSecondCount = 0;
 		
 		
+		//숙제 1
+		//private ArrayList<Protocol> mProtocolList; //멤버 변수 선언
+		
+		//위의 리스트에 protocol.txt 파일에서 읽은 PCR 정보를 불러와서 저장하기.
+		//이 작업은  public MyPCR() 생성자에서 수행
+		//출력 형태 변경(현재 동작하고 있는 프로토콜을 출력하시오)
+		//Label :%s, TargetTemp : %3.1f, Reamin: %d 상태: %s,  온도: %3.1f, elapsedTime : %s", getStateString(),mTemp, getElasedTime()));
+		//만약, PCR 이 동작중이지 않은 경우, 이전 출력 형태를 유지 하세요.
+		
+		
+		//숙제 2
+		//microPCR_Firmware 에서 branch 를 pic18f4550_emul로 변경하세요
+		//pwmValue 계산하는 부분 참조하여 온도 증감 값 정하기.
+		
+		//
+		
 	}
 	
 	public void run(){
@@ -71,6 +87,7 @@ public class MyPCR extends Thread {
 					mPreTemp = mTargetTemp;
 					if(temps.length <= mArrangeCount){
 						stopPCR();
+						//continue;
 					}else{
 						mTargetTemp = temps[mArrangeCount];
 					}
