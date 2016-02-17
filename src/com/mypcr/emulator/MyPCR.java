@@ -2,8 +2,10 @@ package com.mypcr.emulator;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -13,6 +15,7 @@ public class MyPCR extends Thread {
 	//
 	private double mTemp;
 	private double mPreTemp, mTargetTemp;
+	private int mTime;
 	private int state;
 	private int mElapsedTime;
 	private int mSecondCount;
@@ -20,6 +23,12 @@ public class MyPCR extends Thread {
 	private boolean isMonitor = false;
 	private boolean mTempFalg = false;
 	private boolean mTempTargetFalg = false;
+	private boolean mTimeTargetFalg = false;
+	
+	private ArrayList<Protocol> mProtocolList;
+	private String mLabel ="";
+	
+	private int  mPriticilSize;
 	
 	private static final int STATE_READY = 0x00;
 	private static final int STATE_RUN = 0x01;
@@ -35,10 +44,15 @@ public class MyPCR extends Thread {
 		mTemp = 25.1;
 		mPreTemp = 25.1;
 		mTargetTemp = 25.1;
+		mTime = 0;
 		state = STATE_READY;
 		mElapsedTime = 0;
 		mSecondCount = 0;
 		
+		String data = loadProtocolFromFile("protocol.txt");
+		mProtocolList = makeProtocolList(data);
+		
+		mPriticilSize = mProtocolList.size();
 		
 		//숙제 1
 		//private ArrayList<Protocol> mProtocolList; //멤버 변수 선언
@@ -69,27 +83,60 @@ public class MyPCR extends Thread {
 			}
 			
 			if(state == STATE_RUN){
-		
+				
 				if( mTargetTemp - mPreTemp< 0){
-					mTemp -= 1.0;
+					if(!mTempTargetFalg)
+						mTemp -= 0.5;
 					if(mTemp < mTargetTemp)
 						mTempTargetFalg = true;
 				}	
 				else {
-					mTemp += 1.0;
+					if(!mTempTargetFalg)
+						mTemp += 0.5;
 					if(mTemp > mTargetTemp)
-						mTempTargetFalg = true;
+						mTempTargetFalg = true;	
+				}
+				
+				if(mTempTargetFalg){
+					if(mTime == 0){
+						mSecondCount = 0;
+						mTimeTargetFalg = true;
+					}
+					else{
+						if(mSecondCount++ >= 2)
+						{
+							mSecondCount=0;
+							mTime--;
+						}
+					}
 				}
 	
-				if(mTempTargetFalg){
+				if(mTimeTargetFalg && mTempTargetFalg){
 					mTempTargetFalg = false;
+					mTimeTargetFalg = false;
 					mArrangeCount++;
 					mPreTemp = mTargetTemp;
-					if(temps.length <= mArrangeCount){
+					if(mPriticilSize <= mArrangeCount){
 						stopPCR();
 						//continue;
 					}else{
-						mTargetTemp = temps[mArrangeCount];
+						String str= mProtocolList.get(mArrangeCount).getLabel();
+						if(str.equals("GOTO"))
+						{
+							int target = mProtocolList.get(mArrangeCount).getTemp(); 
+							int time = mProtocolList.get(mArrangeCount).getTime();
+							mProtocolList.get(mArrangeCount).setTime(time-1);
+							
+							if(time-1 != 0){
+								mArrangeCount = target-1;
+							} else
+							{
+								mArrangeCount++;
+							}
+						} 
+						System.out.println(mArrangeCount);
+						mTargetTemp = mProtocolList.get(mArrangeCount).getTemp();
+						mTime = mProtocolList.get(mArrangeCount).getTime();
 					}
 				}
 				/*
@@ -258,7 +305,13 @@ public class MyPCR extends Thread {
 	
 	public void printStatus(){
 		 Calendar time1 = Calendar.getInstance();
-		System.out.println(String.format("상태: %s,  온도: %3.1f, elapsedTime : %s", getStateString(),mTemp, getElasedTime()));
+		 if(state == STATE_RUN)
+		 {
+			 System.out.println(String.format("Label :%s, TargetTemp : %3.1f, Reamin: %d, 상태: %s,  온도: %3.1f, "
+			 		+ "elapsedTime : %s", mProtocolList.get(mArrangeCount).getLabel(), mTargetTemp, mTime,getStateString(), mTemp, getElasedTime()));
+		 } else
+			 System.out.println(String.format("상태: %s,  온도: %3.1f, elapsedTime : %s", getStateString(), mTemp, getElasedTime()));
+
 	}
 	
 	public void startPCR(){
@@ -267,7 +320,8 @@ public class MyPCR extends Thread {
 		state = STATE_RUN;
 		mPreTemp = DEFAULT_TEMP;
 		mArrangeCount = 0;
-		mTargetTemp = temps[mArrangeCount];
+		mTargetTemp = mProtocolList.get(mArrangeCount).getTemp();
+		mTime = mProtocolList.get(mArrangeCount).getTime();
 		System.out.println("PCR 시작!");
 		
 	}
@@ -286,6 +340,8 @@ public class MyPCR extends Thread {
 	public boolean isMonitoring(){
 		return isMonitor;
 	}
+	
+	
 
 //	private
 }
